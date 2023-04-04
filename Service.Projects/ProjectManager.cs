@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
-using BlogServer.Utility;
+using Utility;
 
-namespace BlogServer;
+namespace Projects.Service;
 
 public class ProjectManager
 {
@@ -17,7 +17,12 @@ public class ProjectManager
     private readonly Regex IDPattern = new Regex(@"[^\S\n\r]*\$project->path ?= ?""(.*)"";\r*$", 
         RegexOptions.Multiline | RegexOptions.Compiled);
     private DelayedFileWatcher _FileWatcher;
-    private readonly ILogger _Logger = Logging.CreateLogger<ProjectManager>();
+    private readonly ILogger _Logger;
+
+    public ProjectManager(WebApplication application)
+    {
+        _Logger = application.CreateLogger<ProjectManager>();
+    }
     
     private void RegenerateCache()
     {

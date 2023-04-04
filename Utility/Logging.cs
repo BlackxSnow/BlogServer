@@ -1,4 +1,8 @@
-namespace BlogServer.Utility;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+namespace Utility;
 
 public static class Logging
 {
@@ -9,7 +13,7 @@ public static class Logging
     //     
     // });
 
-    public static ILogger CreateLogger<T>() => Program.App.Services.GetService<ILogger<T>>();
+    public static ILogger CreateLogger<T>(this WebApplication app) => app.Services.GetService<ILogger<T>>()!;
     // public static ILogger CreateLogger(string category) => _LoggerFactory.CreateLogger(category);
     
     

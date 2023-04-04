@@ -15,14 +15,15 @@ namespace BlogServer.Controllers
         [HttpGet("[action]")]
         public int Count()
         {
-            return Program.PostManager.PostsByDateAscending.Count;
+            Console.WriteLine("count");
+            return Program.ServiceInstance.PostManager.PostsByDateAscending.Count;
         }
 
         [HttpGet("header/byindex")]
         public PostMetadata[] HeadersByIndexRange(int last, int count)
         {
-            if (last < 0) last = Program.PostManager.PostsByDateAscending.Count - (last - 1);
-            return Program.PostManager.PostsByDateAscending.Skip(last - count).Take(count)
+            if (last < 0) last = Program.ServiceInstance.PostManager.PostsByDateAscending.Count - (last - 1);
+            return Program.ServiceInstance.PostManager.PostsByDateAscending.Skip(last - count).Take(count)
                 .Select(p => p.Metadata).Reverse().ToArray();
         }
         
@@ -30,7 +31,7 @@ namespace BlogServer.Controllers
         [HttpGet("post/byid/{id}")]
         public PostView PostByID(string id)
         {
-            return Program.PostManager.PostsByTitleID[id].GetPostView();
+            return Program.ServiceInstance.PostManager.PostsByTitleID[id].GetPostView();
         }
 
         // POST: api/Blog

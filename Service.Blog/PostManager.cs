@@ -3,14 +3,14 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml;
 using BlogServer.ResourceViews;
-using BlogServer.Utility;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using Utility;
 
 namespace BlogServer;
 
 public class PostManager
 {
-    private readonly ILogger _Logger = Logging.CreateLogger<PostManager>();
+    private readonly ILogger _Logger;
     
     public SortedSet<BlogPost> PostsByDateAscending { get; private set; } = new(new PostMetadataComparer());
     public Dictionary<string, BlogPost> PostsByFileName { get; private set; } = new();
@@ -19,7 +19,11 @@ public class PostManager
     private DelayedFileWatcher _DelayedFileWatcher;
     // private FileSystemWatcher _Watcher;
 
-
+    public PostManager(WebApplication app)
+    {
+        _Logger = app.CreateLogger<PostManager>();
+    }
+    
     private void AddPost(BlogPost post, string fileName)
     {
         PostsByDateAscending.Add(post);

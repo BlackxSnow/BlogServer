@@ -1,7 +1,7 @@
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace BlogServer.Utility;
+namespace Utility;
 
 public class DelayedFileWatcher
 {
