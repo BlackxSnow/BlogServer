@@ -10,4 +10,8 @@
       <Folder Include="tokens" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Yarp.ReverseProxy" Version="2.0.0" />
+    </ItemGroup>
+
 </Project>

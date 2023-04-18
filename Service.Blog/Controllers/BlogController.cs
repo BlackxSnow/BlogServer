@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BlogServer.ResourceViews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,10 @@ namespace BlogServer.Controllers
     public class BlogController : ControllerBase
     {
         [HttpGet("[action]")]
+        [Authorize]
         public int Count()
         {
-            Console.WriteLine("count");
+            Console.WriteLine(HttpContext.User.Claims.Count());
             return Program.ServiceInstance.PostManager.PostsByDateAscending.Count;
         }
 

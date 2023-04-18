@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -14,6 +17,18 @@ public class ServiceBase
     protected virtual void ConfigureBuilder(WebApplicationBuilder builder)
     {
         builder.Services.AddControllers();
+
+        builder.Services.AddDataProtection().SetApplicationName("CelesteWebApp");
+        builder.Services.AddAuthentication("Identity.Application")
+            .AddCookie("Identity.Application", options =>
+        {
+            options.Cookie.Name = ".Celeste.SharedCookie";
+            // options.LoginPath = ""
+        });
+        builder.Services.AddAuthorization();
+        builder.Services.AddHttpClient();
+        builder.Services.AddHostedService<Gateway>();
+        builder.Services.Configure<GatewayOptions>(builder.Configuration.GetSection(GatewayOptions.Key));
     }
 
     protected virtual void ConfigureApplication(WebApplication app)
@@ -24,8 +39,10 @@ public class ServiceBase
             app.UseHsts();
         }
 
+        app.UseAuthentication();
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseAuthorization();
         app.UseHttpLogging();
         app.MapControllers();
     }
@@ -36,22 +53,18 @@ public class ServiceBase
         ConfigureBuilder(builder);
         Application = builder.Build();
         
-        // ProjectManager = new ProjectManager();
-        
         ConfigureApplication(Application);
-        
-        // ProjectManager.GenerateCache(args.ElementAtOrDefault(1) ?? "/home/celeste/professional/PortfolioGulp/dev/projects");
     }
 
     public void Run()
     {
         Application.Start();
 
-        string address = Application.Services.GetService<IServer>()!.Features.Get<IServerAddressesFeature>()!.Addresses.First();
-        
-        Gateway.RegisterToGateway(Client, Application.Configuration, address[..address.IndexOf(':')],
-            address[(address.LastIndexOf(':')+1)..]);
-        
         Application.WaitForShutdown();
+    }
+
+    public void Start()
+    {
+        Application.Start();
     }
 }

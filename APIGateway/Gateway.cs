@@ -4,7 +4,7 @@ namespace APIGateway;
 
 public class Gateway
 {
-    public readonly HttpClient Client = new HttpClient();
+    public readonly HttpMessageInvoker Client = new HttpMessageInvoker(new SocketsHttpHandler());
     public WebApplication Application { get; private init; }
 
     public readonly IAuthenticator Authenticator;
@@ -15,7 +15,13 @@ public class Gateway
         
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
-        builder.Services.AddCors(c => c.AddDefaultPolicy(p => p.AllowAnyOrigin()));
+        builder.Services.AddCors(c =>
+            c.AddDefaultPolicy(p =>
+            {
+                p.AllowAnyHeader();
+                p.AllowAnyOrigin();
+            }));
+        builder.Services.AddHttpForwarder();
 
         Application = builder.Build();
         
